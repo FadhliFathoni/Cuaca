@@ -54,8 +54,8 @@ class LoginView(APIView):
 
 class UserView(APIView):
     def get(self, request):
-        # token = request.headers.get('jwt')
-        token = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpZCI6IjEiLCJleHAiOjE2NzY5NTQyNjksImlhdCI6MTY3Njk1MDY2OX0.wmHoelXNsxZkaDLVQtbvWvmq1ApV-32Uy1TCz1PrQP8"
+        token = request.headers.get('jwt')
+        # token = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpZCI6IjEiLCJleHAiOjE2NzY5NTQyNjksImlhdCI6MTY3Njk1MDY2OX0.wmHoelXNsxZkaDLVQtbvWvmq1ApV-32Uy1TCz1PrQP8"
 
         # token = request.headers.get('token', None)
 
@@ -89,8 +89,8 @@ class LogoutView(APIView):
 
 @api_view(["GET"])
 def getUser(request):
-    # token = request.headers.get('jwt')
-    token = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpZCI6IjEiLCJleHAiOjE2NzY5NTgwNjEsImlhdCI6MTY3Njk1NDQ2MX0.qSUzH5hEEy-dhpWWJZQpxwGMZcu0UPL92lJmiZRiemI"
+    token = request.headers.get('jwt')
+    # token = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpZCI6IjEiLCJleHAiOjE2NzY5NTgwNjEsImlhdCI6MTY3Njk1NDQ2MX0.qSUzH5hEEy-dhpWWJZQpxwGMZcu0UPL92lJmiZRiemI"
 
     if not token:
         raise AuthenticationFailed('Unauthenticated!')
