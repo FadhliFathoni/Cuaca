@@ -9,4 +9,11 @@ class Misi(models.Model):
     poin = models.IntegerField()
     waktu = models.IntegerField()
 
-
+class TerimaMisi(models.Model):
+    id_misi = models.IntegerField()
+    misi = models.CharField(max_length=120)
+    id_user = models.IntegerField()
+    user = models.CharField(max_length=150)
+    waktu = models.IntegerField()
+    poin = models.IntegerField()
+    status = models.CharField(max_length=24)

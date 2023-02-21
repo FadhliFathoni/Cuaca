@@ -42,6 +42,7 @@ INSTALLED_APPS = [
     'API.Misi',
     'API.Poin',
     'API.Penukaran',
+    'API.Tema',
 
     'drf_yasg',
     'rest_framework',

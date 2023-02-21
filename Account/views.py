@@ -15,23 +15,25 @@ import datetime
 
 class RegisterView(APIView):
     def post(self, request):
-        data = User.objects.create_user(
-            name = request.data["name"],
-            email = request.data["email"],
-            password = request.data["password"],
-            phone = request.data["phone"],
-        )
-        Poin.objects.create(
-            id_user = data.id,
-            email = data.email,
-            user = data.name,
-            poin = 0,
-        )
-        serializer = UserSerializer(data = data)
-        if serializer.is_valid():
-            serializer.save()
-        
-        return Response(serializer.data)
+        try:
+            data = User.objects.create_user(
+                name = request.data["name"],
+                email = request.data["email"],
+                password = request.data["password"],
+                phone = request.data["phone"],
+            )
+            Poin.objects.create(
+                id_user = data.id,
+                email = data.email,
+                user = data.name,
+                poin = 0,
+            )
+            serializer = UserSerializer(data = data)
+            if serializer.is_valid():
+                serializer.save()
+            return Response(serializer.data)
+        except:
+            return Response("User already exist")
 
 
 class LoginView(APIView):
@@ -62,7 +64,6 @@ class LoginView(APIView):
         response.data = {
             'jwt': token
         }
-
         return response
 
 class LogoutView(APIView):
