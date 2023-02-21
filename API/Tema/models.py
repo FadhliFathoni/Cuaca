@@ -16,6 +16,4 @@ class PenukaranTema(models.Model):
     tema = models.CharField(max_length=24)
     id_user = models.IntegerField()
     user = models.CharField(max_length=150)
-    waktu = models.IntegerField()
-    poin = models.IntegerField()
     status = models.CharField(max_length=24)

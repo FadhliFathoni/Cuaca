@@ -7,20 +7,7 @@ from rest_framework.exceptions import AuthenticationFailed
 from Account.models import User
 import jwt
 
-class CreateMisi(CreateAPIView):
-    serializer_class = MisiSerializer
-    queryset = Misi.objects.all()
-
-class ListMisi(ListAPIView):
-    queryset = Misi.objects.all()
-    serializer_class = MisiSerializer
-
-class DeleteMisi(DestroyAPIView):
-    queryset = Misi.objects.all()
-    serializer_class = MisiSerializer
-
-@api_view(["POST"])
-def GetMisi(request,misi_id):
+def getUser(request):
     token = ""
     jwt_cookie = request.headers.get('Cookie')
     if jwt_cookie:
@@ -35,6 +22,23 @@ def GetMisi(request,misi_id):
     except jwt.ExpiredSignatureError:
         raise AuthenticationFailed('Unauthenticated!')
     user = User.objects.get(id=payload['id'])
+    return user
+
+class CreateMisi(CreateAPIView):
+    serializer_class = MisiSerializer
+    queryset = Misi.objects.all()
+
+class ListMisi(ListAPIView):
+    queryset = Misi.objects.all()
+    serializer_class = MisiSerializer
+
+class DeleteMisi(DestroyAPIView):
+    queryset = Misi.objects.all()
+    serializer_class = MisiSerializer
+
+@api_view(["POST"])
+def GetMisi(request,misi_id):
+    user = getUser(request)
     try:
         misi = Misi.objects.get(id = misi_id)
     except:
@@ -52,6 +56,9 @@ def GetMisi(request,misi_id):
     except:
         return Response("Misi sudah diterima")
     
-class ListTerima(ListAPIView):
-    queryset = TerimaMisi.objects.all()
-    serializer_class = TerimaMisiSerializer
+@api_view(["GET"])
+def ListTerima(request):
+    user = getUser(request)
+    queryset = TerimaMisi.objects.filter(status = "Pending",id_user = user.id)
+    serializer = TerimaMisiSerializer(queryset, many=True)
+    return Response(serializer.data)
