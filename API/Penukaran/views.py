@@ -16,8 +16,13 @@ class ListPenukaran(ListAPIView):
 @api_view(["GET","POST"])
 def TukarMisi(request, id):
     misi = Misi.objects.get(id = id)
-    token = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpZCI6IjEiLCJleHAiOjE2NzY5NTgwNjEsImlhdCI6MTY3Njk1NDQ2MX0.qSUzH5hEEy-dhpWWJZQpxwGMZcu0UPL92lJmiZRiemI"
-
+    token = ""
+    jwt_cookie = request.headers.get('Cookie')
+    if jwt_cookie:
+        cookies = {c.split('=')[0]: c.split('=')[1] for c in jwt_cookie.split('; ')}
+        token = cookies.get('jwt')
+    else:
+        pass
     if not token:
         raise AuthenticationFailed('Unauthenticated!')
     try:

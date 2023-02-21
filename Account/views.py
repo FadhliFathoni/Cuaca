@@ -51,32 +51,6 @@ class LoginView(APIView):
 
         return response
 
-
-class UserView(APIView):
-    def get(self, request):
-        token = request.headers.get('jwt')
-        # token = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpZCI6IjEiLCJleHAiOjE2NzY5NTQyNjksImlhdCI6MTY3Njk1MDY2OX0.wmHoelXNsxZkaDLVQtbvWvmq1ApV-32Uy1TCz1PrQP8"
-
-        # token = request.headers.get('token', None)
-
-        # print(type(token))
-
-        if not token or token == '':
-            raise AuthenticationFailed('Unauthenticated!')
-
-        try:
-            payload = jwt.decode(token, 'secret', algorithm=['HS256'])
-        except jwt.ExpiredSignatureError:
-            raise AuthenticationFailed('Unauthenticated!')
-
-        user = User.objects.filter(id=payload['id']).first()
-        serializer = UserSerializer(user)
-
-        
-        
-        return Response(serializer.data)
-
-
 class LogoutView(APIView):
     def post(self, request):
         response = Response()
@@ -89,9 +63,13 @@ class LogoutView(APIView):
 
 @api_view(["GET"])
 def getUser(request):
-    token = request.headers.get('jwt')
-    # token = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpZCI6IjEiLCJleHAiOjE2NzY5NTgwNjEsImlhdCI6MTY3Njk1NDQ2MX0.qSUzH5hEEy-dhpWWJZQpxwGMZcu0UPL92lJmiZRiemI"
-
+    token = ""
+    jwt_cookie = request.headers.get('Cookie')
+    if jwt_cookie:
+        cookies = {c.split('=')[0]: c.split('=')[1] for c in jwt_cookie.split('; ')}
+        token = cookies.get('jwt')
+    else:
+        pass
     if not token:
         raise AuthenticationFailed('Unauthenticated!')
     try:
