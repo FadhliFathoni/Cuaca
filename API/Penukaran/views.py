@@ -49,3 +49,6 @@ def TukarMisi(request, id):
         else:
             return Response("Point Kurang")
     return Response("Exchange your point")
+
+# @api_view(["GET","POST"])
+# def TukarTema(request)
