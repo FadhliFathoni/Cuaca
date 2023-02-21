@@ -15,18 +15,22 @@ import datetime
 
 class RegisterView(APIView):
     def post(self, request):
-        # serializer = UserSerializer(data=request.data)
-        # serializer.is_valid(raise_exception=True)
-        # serializer.save()
         data = User.objects.create_user(
             name = request.data["name"],
             email = request.data["email"],
             password = request.data["password"],
             phone = request.data["phone"],
         )
+        Poin.objects.create(
+            id_user = data.id,
+            email = data.email,
+            user = data.name,
+            poin = 0,
+        )
         serializer = UserSerializer(data = data)
         if serializer.is_valid():
             serializer.save()
+        
         return Response(serializer.data)
 
 
