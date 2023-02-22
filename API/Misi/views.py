@@ -37,7 +37,7 @@ class DeleteMisi(DestroyAPIView):
     queryset = Misi.objects.all()
     serializer_class = MisiSerializer
 
-@api_view(["POST"])
+@api_view(["GET","POST"])
 def GetMisi(request,misi_id):
     user = getUser(request)
     try:
@@ -54,6 +54,7 @@ def GetMisi(request,misi_id):
             poin = misi.poin,
             status = "Pending",
         )
+        return Response("Success")
     except:
         return Response("Misi sudah diterima")
     
@@ -72,7 +73,7 @@ class CancelMisi(DestroyAPIView):
     queryset = TerimaMisi.objects.all()
     serializer_class = TerimaMisiSerializer
 
-@api_view(["POST"])
+@api_view(["GET","POST"])
 def MissionComplete(request, id):
     try:
         user = getUser(request)
@@ -82,5 +83,6 @@ def MissionComplete(request, id):
             poin = poinUser + misi.poin
         )
         TerimaMisi.objects.filter(id = id).delete()
+        return Response("Success")
     except:
         return Response("Failed")
