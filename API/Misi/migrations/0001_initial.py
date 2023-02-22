@@ -17,7 +17,7 @@ class Migration(migrations.Migration):
             fields=[
                 ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
                 ('judul', models.CharField(max_length=120)),
-                ('gambar', models.ImageField(blank=True, null=True, upload_to=API.Misi.models.uploadTo)),
+                ('gambar', models.ImageField(blank=True, null=True)),
                 ('poin', models.IntegerField()),
                 ('waktu', models.IntegerField()),
             ],
