@@ -41,7 +41,6 @@ INSTALLED_APPS = [
     'Account',
     'API.Misi',
     'API.Poin',
-    'API.Penukaran',
     'API.Tema',
 
     'drf_yasg',
@@ -100,6 +99,13 @@ DATABASES = {
         'ENGINE': 'django.db.backends.sqlite3',
         'NAME': BASE_DIR / 'db.sqlite3',
     }
+    # 'default': {
+    #     'ENGINE': 'djongo',
+    #     'CLIENT': {
+    #         'name': 'Cuaca',
+    #         'host': 'mongodb://127.0.0.1:27017/melinda'
+    #     }
+    # }
 }
 
 

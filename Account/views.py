@@ -6,7 +6,7 @@ from rest_framework.views import APIView
 from rest_framework.generics import ListAPIView
 from API.Poin.models import Poin
 from API.Poin.serializers import getPoin
-from API.Tema.models import Tema, PenukaranTema
+from API.Tema.models import Tema, PenukaranTema, UsedTema
 from .models import User
 from .serializers import UserSerializer
 import jwt
@@ -17,27 +17,39 @@ import datetime
 class RegisterView(APIView):
     def post(self, request):
         try:
-            data = User.objects.create_user(
+            user = User.objects.create_user(
                 name = request.data["name"],
                 email = request.data["email"],
                 password = request.data["password"],
                 phone = request.data["phone"],
             )
             Poin.objects.create(
-                id_user = data.id,
-                email = data.email,
-                user = data.name,
+                id_user = user.id,
+                email = user.email,
+                user = user.name,
                 poin = 0,
             )
-            tema = Tema.objects.get(id = 5)
+            tema = Tema.objects.get(id = 1)
             PenukaranTema.objects.create(
-            id_tema = 5,
-            tema = tema.tema,
-            id_user = data.id,
-            user = data.name,
-            status = "Purchased"
-    )
-            serializer = UserSerializer(data = data)
+                id_tema = tema.id,
+                tema = tema.tema,
+                id_user = user.id,
+                user = user.name,
+                status = "Purchased",
+            )
+            UsedTema.objects.create(
+                id_tema = tema.id,
+                tema = tema.tema,
+                id_user = user.id,
+                user = user.name,
+                status = "Active",
+                primary1 = tema.primary1,
+                primary2 = tema.primary2,
+                accent1 = tema.accent1,
+                mainPicture = str(tema.mainPicture),
+                cover = str(tema.cover)
+            )
+            serializer = UserSerializer(data = user)
             if serializer.is_valid():
                 serializer.save()
             return Response(serializer.data)

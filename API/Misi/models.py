@@ -1,7 +1,7 @@
 from django.db import models
 
 def uploadTo(instance, filename):
-    return 'images/{filename}'.format(filename=filename)
+    return 'static/images/{filename}'.format(filename=filename)
 
 class Misi(models.Model):
     judul = models.CharField(max_length=120)

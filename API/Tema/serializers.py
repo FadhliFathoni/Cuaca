@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import Tema, PenukaranTema
+from .models import Tema, PenukaranTema, UsedTema
 
 class TemaSerializer(serializers.ModelSerializer):
     class Meta:
@@ -9,4 +9,9 @@ class TemaSerializer(serializers.ModelSerializer):
 class PenukaranTemaSerializer(serializers.ModelSerializer):
     class Meta:
         model = PenukaranTema
+        fields = "__all__"
+
+class UsedTemaSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = UsedTema
         fields = "__all__"

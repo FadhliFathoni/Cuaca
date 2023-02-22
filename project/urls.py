@@ -8,7 +8,7 @@ from rest_framework import permissions
 
 schema_view = get_schema_view(
     openapi.Info(
-        title="API Minyak Documentation",
+        title="API Documentation",
         default_version='v1',
         description="Documentation",
     ),
@@ -21,7 +21,6 @@ urlpatterns = [
     path('',include('Account.urls')),
     path('poin/',include('API.Poin.urls')),
     path('misi/',include('API.Misi.urls')),
-    path('tukar/',include('API.Penukaran.urls')),
     path('tema/',include('API.Tema.urls')),
     path('api_documentation/', schema_view.with_ui('swagger', cache_timeout=0), name='schema-swagger-ui'),
     re_path(r'^api_documentation(?P<format>\.json|\.yaml)$', schema_view.without_ui(cache_timeout=0), name='schema-json'),

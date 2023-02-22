@@ -1,7 +1,7 @@
 from rest_framework.generics import ListAPIView, CreateAPIView
-from .models import Tema, PenukaranTema
+from .models import Tema, PenukaranTema, UsedTema
 from Account.models import User
-from .serializers import TemaSerializer, PenukaranTemaSerializer
+from .serializers import TemaSerializer, PenukaranTemaSerializer, UsedTemaSerializer
 from rest_framework.response import Response
 from rest_framework.decorators import api_view
 from rest_framework.exceptions import AuthenticationFailed
@@ -46,7 +46,18 @@ def BeliTema(request, id_tema):
 
 @api_view(["GET"])
 def ListPurchased(request):
+    try:
+        user = getUser(request)
+        queryset = PenukaranTema.objects.filter(status = "Purchased",id_user = user.id)
+        serializer = PenukaranTemaSerializer(queryset, many = True)
+        return Response(serializer.data)
+    except:
+        return Response("User didn't have any theme")
+
+@api_view(["GET"])
+def TemaAktif(request):
     user = getUser(request)
-    queryset = PenukaranTema.objects.filter(status = "Purchased",id_user = user.id)
-    serializer = PenukaranTemaSerializer(queryset, many = True)
+    yourTema = UsedTema.objects.get(id_user = user.id)
+    serializer = UsedTemaSerializer(yourTema, many = False)
     return Response(serializer.data)
+    

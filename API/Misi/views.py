@@ -1,6 +1,7 @@
-from rest_framework.generics import CreateAPIView, ListAPIView, DestroyAPIView
 from .serializers import MisiSerializer, TerimaMisiSerializer
 from .models import Misi, TerimaMisi
+from API.Poin.models import Poin
+from rest_framework.generics import CreateAPIView, ListAPIView, DestroyAPIView
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from rest_framework.exceptions import AuthenticationFailed
@@ -62,3 +63,24 @@ def ListTerima(request):
     queryset = TerimaMisi.objects.filter(status = "Pending",id_user = user.id)
     serializer = TerimaMisiSerializer(queryset, many=True)
     return Response(serializer.data)
+
+# @api_view(["POST"])
+# def DeleteMisiTerima(request, id):
+#     TerimaMisi.objects.filter(id = id)
+
+class CancelMisi(DestroyAPIView):
+    queryset = TerimaMisi.objects.all()
+    serializer_class = TerimaMisiSerializer
+
+@api_view(["POST"])
+def MissionComplete(request, id):
+    try:
+        user = getUser(request)
+        misi = TerimaMisi.objects.get(id = id)
+        poinUser = Poin.objects.get(id_user = user.id).poin
+        Poin.objects.filter(id_user = user.id).update(
+            poin = poinUser + misi.poin
+        )
+        TerimaMisi.objects.filter(id = id).delete()
+    except:
+        return Response("Failed")
