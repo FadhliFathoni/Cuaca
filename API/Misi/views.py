@@ -6,6 +6,7 @@ from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from rest_framework.exceptions import AuthenticationFailed
 from Account.models import User
+from datetime import datetime
 import jwt
 
 def getUser(request):
@@ -42,26 +43,50 @@ def GetMisi(request,misi_id):
     user = getUser(request)
     try:
         misi = Misi.objects.get(id = misi_id)
+        end_time = datetime.now().timestamp() + misi.waktu
     except:
         return Response("Mission is missing")
-    if request.method == "POST":
-        TerimaMisi.objects.create(
-            id_misi = misi.id,
-            misi = misi.judul,
-            id_user = user.id,
-            user = user.name,
-            waktu = misi.waktu,
-            poin = misi.poin,
-            status = "Pending",
-        )
-        return Response("Success")
-    else:
+    try:
+        if request.method == "POST":
+            TerimaMisi.objects.create(
+                id_misi = misi.id,
+                misi = misi.judul,
+                id_user = user.id,
+                user = user.name,
+                waktu = misi.waktu,
+                end_time = end_time,
+                poin = misi.poin,
+                status = "Pending",
+            )
+            return Response("Success")
+    except:
         return Response("Failed")
+    return Response()
     
 @api_view(["GET"])
 def ListTerima(request):
     user = getUser(request)
+    now = datetime.now().timestamp()
     queryset = TerimaMisi.objects.filter(status = "Pending",id_user = user.id)
+    try:
+        if queryset.exists():
+            for x in queryset:
+                TerimaMisi.objects.filter(id = x.id).update(
+                    remaining = x.end_time - now
+                )
+                if x.end_time - now <= 0:
+                    try:
+                        misi = TerimaMisi.objects.get(id = x.id)
+                        poinUser = Poin.objects.get(id_user = user.id).poin
+                        Poin.objects.filter(id_user = user.id).update(
+                            poin = poinUser + misi.poin
+                        )
+                        TerimaMisi.objects.filter(id = x.id).delete()
+                        return Response("Success")
+                    except:
+                        return Response("Failed")
+    except:
+        return Response("Belum ambil misi") 
     serializer = TerimaMisiSerializer(queryset, many=True)
     return Response(serializer.data)
 
