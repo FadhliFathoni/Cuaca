@@ -87,3 +87,4 @@ def MissionComplete(request, id):
             return Response("Success")
         except:
             return Response("Failed")
+    return Response("Submit Mission")
