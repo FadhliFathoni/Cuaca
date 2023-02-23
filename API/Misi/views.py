@@ -55,7 +55,7 @@ def GetMisi(request,misi_id):
                 user = user.name,
                 waktu = misi.waktu,
                 end_time = end_time,
-                remaining = end_time - datetime.now().timestamp(),
+                remaining = int(end_time - datetime.now().timestamp()),
                 poin = misi.poin,
                 status = "Pending",
             )
@@ -73,19 +73,15 @@ def ListTerima(request):
         if queryset.exists():
             for x in queryset:
                 TerimaMisi.objects.filter(id = x.id).update(
-                    remaining = x.end_time - now
+                    remaining = int(x.end_time - now)
                 )
                 if x.end_time - now <= 0:
-                    try:
-                        misi = TerimaMisi.objects.get(id = x.id)
-                        poinUser = Poin.objects.get(id_user = user.id).poin
-                        Poin.objects.filter(id_user = user.id).update(
-                            poin = poinUser + misi.poin
-                        )
-                        TerimaMisi.objects.filter(id = x.id).delete()
-                        return Response("Success")
-                    except:
-                        return Response("Failed")
+                    misi = TerimaMisi.objects.get(id = x.id)
+                    poinUser = Poin.objects.get(id_user = user.id).poin
+                    Poin.objects.filter(id_user = user.id).update(
+                        poin = poinUser + misi.poin
+                    )
+                    TerimaMisi.objects.filter(id = x.id).delete()
     except:
         return Response("Belum ambil misi") 
     serializer = TerimaMisiSerializer(queryset, many=True)
