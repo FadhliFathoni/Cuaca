@@ -44,7 +44,7 @@ def GetMisi(request,misi_id):
         misi = Misi.objects.get(id = misi_id)
     except:
         return Response("Mission is missing")
-    try:
+    if request.method == "POST":
         TerimaMisi.objects.create(
             id_misi = misi.id,
             misi = misi.judul,
@@ -55,8 +55,8 @@ def GetMisi(request,misi_id):
             status = "Pending",
         )
         return Response("Success")
-    except:
-        return Response("Misi sudah diterima")
+    else:
+        return Response("Failed")
     
 @api_view(["GET"])
 def ListTerima(request):
@@ -75,14 +75,15 @@ class CancelMisi(DestroyAPIView):
 
 @api_view(["GET","POST"])
 def MissionComplete(request, id):
-    try:
-        user = getUser(request)
-        misi = TerimaMisi.objects.get(id = id)
-        poinUser = Poin.objects.get(id_user = user.id).poin
-        Poin.objects.filter(id_user = user.id).update(
-            poin = poinUser + misi.poin
-        )
-        TerimaMisi.objects.filter(id = id).delete()
-        return Response("Success")
-    except:
-        return Response("Failed")
+    if request.method == "POST":
+        try:
+            user = getUser(request)
+            misi = TerimaMisi.objects.get(id = id)
+            poinUser = Poin.objects.get(id_user = user.id).poin
+            Poin.objects.filter(id_user = user.id).update(
+                poin = poinUser + misi.poin
+            )
+            TerimaMisi.objects.filter(id = id).delete()
+            return Response("Success")
+        except:
+            return Response("Failed")

@@ -6,7 +6,7 @@ from rest_framework.views import APIView
 from rest_framework.generics import ListAPIView
 from API.Poin.models import Poin
 from API.Poin.serializers import getPoin
-from API.Tema.models import Tema, PenukaranTema, UsedTema
+from API.Tema.models import Tema, UsedTema, TemaUser
 from .models import User
 from .serializers import UserSerializer
 import jwt
@@ -30,13 +30,20 @@ class RegisterView(APIView):
                 poin = 0,
             )
             tema = Tema.objects.get(id = 1)
-            PenukaranTema.objects.create(
-                id_tema = tema.id,
-                tema = tema.tema,
-                id_user = user.id,
-                user = user.name,
-                status = "Purchased",
-            )
+            for x in Tema.objects.all():
+                TemaUser.objects.create(
+                    id_tema = x.id,
+                    tema = x.tema,
+                    id_user = user.id,
+                    user = user.name,
+                    status = "Active" if x.id == 1 else "Not Purchased",
+                    purchased = True if x.id == 1 else False,
+                    primary1 = x.primary1,
+                    primary2 = x.primary2,
+                    accent1 = x.accent1,
+                    mainPicture = x.mainPicture,
+                    cover = x.cover
+                )
             UsedTema.objects.create(
                 id_tema = tema.id,
                 tema = tema.tema,

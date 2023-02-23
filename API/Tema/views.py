@@ -1,7 +1,8 @@
-from rest_framework.generics import ListAPIView, CreateAPIView
-from .models import Tema, PenukaranTema, UsedTema
 from Account.models import User
-from .serializers import TemaSerializer, PenukaranTemaSerializer, UsedTemaSerializer
+from API.Poin.models import Poin
+from .models import Tema, UsedTema, TemaUser
+from .serializers import TemaSerializer, UsedTemaSerializer, TemaUserSerializer
+from rest_framework.generics import ListAPIView, CreateAPIView
 from rest_framework.response import Response
 from rest_framework.decorators import api_view
 from rest_framework.exceptions import AuthenticationFailed
@@ -23,8 +24,14 @@ def getUser(request):
         raise AuthenticationFailed('Unauthenticated!')
     user = User.objects.get(id=payload['id'])
     return user
+@api_view(["GET"])
+def ListTema(request):
+    user = getUser(request)
+    queryset = TemaUser.objects.filter(id_user = user.id)
+    serializer = TemaUserSerializer(queryset, many = True)
+    return Response(serializer.data)
 
-class ListTema(ListAPIView):
+class List(ListAPIView):
     queryset = Tema.objects.all()
     serializer_class = TemaSerializer
 
@@ -32,24 +39,30 @@ class CreateTema(CreateAPIView):
     queryset = Tema.objects.all()
     serializer_class = TemaSerializer
 
-@api_view(["POST"])
+@api_view(["GET","POST"])
 def BeliTema(request, id_tema):
     user = getUser(request)
+    poin = Poin.objects.get(id_user = user.id).poin
     tema = Tema.objects.get(id = id_tema)
-    PenukaranTema.objects.create(
-        id_tema = id_tema,
-        tema = tema.tema,
-        id_user = user.id,
-        user = user.name,
-        status = "Purchased"
-    )
-
+    if request.method == "POST":
+        if poin >= int(tema.poin):
+            TemaUser.objects.filter(id = id_tema).update(
+                purchased = True,
+                status = "Purchased"
+            )
+            Poin.objects.filter(id_user = user.id).update(
+                poin = poin - int(tema.poin)
+            )
+            return Response("Success")
+    else:
+        return Response("Poin kurang")
+    
 @api_view(["GET"])
 def ListPurchased(request):
     try:
         user = getUser(request)
-        queryset = PenukaranTema.objects.filter(status = "Purchased",id_user = user.id)
-        serializer = PenukaranTemaSerializer(queryset, many = True)
+        queryset = TemaUser.objects.filter(status = "Purchased",id_user = user.id)
+        serializer = TemaUserSerializer(queryset, many = True)
         return Response(serializer.data)
     except:
         return Response("User didn't have any theme")
@@ -57,7 +70,15 @@ def ListPurchased(request):
 @api_view(["GET"])
 def TemaAktif(request):
     user = getUser(request)
-    yourTema = UsedTema.objects.get(id_user = user.id)
-    serializer = UsedTemaSerializer(yourTema, many = False)
+    yourTema = TemaUser.objects.get(id_user = user.id, status = "Active")
+    serializer = TemaUserSerializer(yourTema, many = False)
     return Response(serializer.data)
-    
+
+@api_view(["GET","POST"])
+def UbahTema(request, id_tema):
+    user = getUser(request)
+    if request.method == "POST":
+        TemaUser.objects.filter(id_user = user.id,status = "Active").update(status = "Purchased")
+        TemaUser.objects.filter(id_user = user.id,id = id_tema).update(status = "Active")
+        return Response("Berhasil Diubah")
+    return Response("Ubah Tema")

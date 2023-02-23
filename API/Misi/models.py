@@ -10,10 +10,10 @@ class Misi(models.Model):
         return "{}".format(self.judul)
 
 class TerimaMisi(models.Model):
-    id_misi = models.IntegerField()
-    misi = models.CharField(max_length=120)
-    id_user = models.IntegerField()
-    user = models.CharField(max_length=150)
+    id_misi = models.IntegerField(null=True)
+    misi = models.CharField(max_length=120,null=True)
+    id_user = models.IntegerField(null=True)
+    user = models.CharField(max_length=150,null=True)
     waktu = models.IntegerField()
     poin = models.IntegerField()
     status = models.CharField(max_length=24)
