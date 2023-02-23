@@ -29,7 +29,6 @@ class RegisterView(APIView):
                 user = user.name,
                 poin = 0,
             )
-            tema = Tema.objects.get(id = 1)
             for x in Tema.objects.all():
                 TemaUser.objects.create(
                     id_tema = x.id,
@@ -43,7 +42,8 @@ class RegisterView(APIView):
                     accent1 = x.accent1,
                     accent2 = x.accent2,
                     mainPicture = x.mainPicture,
-                    icon = x.icon
+                    icon = x.icon,
+                    poin = "Free" if x.id == 1 else "250"
                 )
             serializer = UserSerializer(data = user)
             if serializer.is_valid():
