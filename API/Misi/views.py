@@ -55,6 +55,7 @@ def GetMisi(request,misi_id):
                 user = user.name,
                 waktu = misi.waktu,
                 end_time = end_time,
+                remaining = end_time - datetime.now().timestamp(),
                 poin = misi.poin,
                 status = "Pending",
             )
