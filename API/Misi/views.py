@@ -65,10 +65,6 @@ def ListTerima(request):
     serializer = TerimaMisiSerializer(queryset, many=True)
     return Response(serializer.data)
 
-# @api_view(["POST"])
-# def DeleteMisiTerima(request, id):
-#     TerimaMisi.objects.filter(id = id)
-
 class CancelMisi(DestroyAPIView):
     queryset = TerimaMisi.objects.all()
     serializer_class = TerimaMisiSerializer
@@ -87,4 +83,4 @@ def MissionComplete(request, id):
             return Response("Success")
         except:
             return Response("Failed")
-    return Response("Submit Mission")
+    return Response()

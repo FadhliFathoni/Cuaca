@@ -1,6 +1,6 @@
 from Account.models import User
 from API.Poin.models import Poin
-from .models import Tema, UsedTema, TemaUser
+from .models import Tema, TemaUser
 from .serializers import TemaSerializer, UsedTemaSerializer, TemaUserSerializer
 from rest_framework.generics import ListAPIView, CreateAPIView
 from rest_framework.response import Response
@@ -54,8 +54,9 @@ def BeliTema(request, id_tema):
                 poin = poin - int(tema.poin)
             )
             return Response("Success")
-    else:
-        return Response("Poin kurang")
+        else:
+            return Response("Poin kurang")
+    return Response()
     
 @api_view(["GET"])
 def ListPurchased(request):
@@ -71,14 +72,18 @@ def ListPurchased(request):
 def TemaAktif(request):
     user = getUser(request)
     yourTema = TemaUser.objects.get(id_user = user.id, status = "Active")
-    serializer = TemaUserSerializer(yourTema, many = False)
+    serializer = UsedTemaSerializer(yourTema, many = False)
     return Response(serializer.data)
 
 @api_view(["GET","POST"])
 def UbahTema(request, id_tema):
     user = getUser(request)
     if request.method == "POST":
-        TemaUser.objects.filter(id_user = user.id,status = "Active").update(status = "Purchased")
-        TemaUser.objects.filter(id_user = user.id,id = id_tema).update(status = "Active")
-        return Response("Berhasil Diubah")
-    return Response("Ubah Tema")
+        try:
+            if TemaUser.objects.get(id_user = user.id, id_tema = id_tema ,status = "Purchased"):
+                TemaUser.objects.filter(id_user = user.id,status = "Active").update(status = "Purchased")
+                TemaUser.objects.filter(id_user = user.id,id_tema = id_tema).update(status = "Active")
+                return Response("Berhasil Diubah")
+        except:
+            return Response("Tema belum dibeli")
+    return Response()

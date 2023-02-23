@@ -1,6 +1,5 @@
 from django.contrib import admin
-from .models import Tema, UsedTema, TemaUser
+from .models import Tema, TemaUser
 
 admin.site.register(Tema)
-admin.site.register(UsedTema)
 admin.site.register(TemaUser)
