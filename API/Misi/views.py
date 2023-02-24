@@ -48,7 +48,7 @@ def GetMisi(request,misi_id):
         return Response("Mission is missing")
     try:
         if request.method == "POST":
-            if TerimaMisi.objects.filter(id_misi = misi_id, id_user = user.id).exists():
+            if TerimaMisi.objects.filter(id_user = user.id).exists():
                 return Response("Misi sudah ada")
             else:
                 TerimaMisi.objects.create(
