@@ -43,7 +43,7 @@ def GetMisi(request,misi_id):
     user = getUser(request)
     try:
         misi = Misi.objects.get(id = misi_id)
-        end_time = datetime.now().timestamp() + misi.waktu
+        end_time = datetime.now().timestamp() + (misi.waktu * 86400)
     except:
         return Response("Mission is missing")
     try:

@@ -43,7 +43,7 @@ class RegisterView(APIView):
                     accent2 = x.accent2,
                     mainPicture = x.mainPicture,
                     icon = x.icon,
-                    poin = "Free" if x.id == 1 else "250"
+                    poin = "Free" if x.id == 1 else x.poin
                 )
             serializer = UserSerializer(data = user)
             if serializer.is_valid():

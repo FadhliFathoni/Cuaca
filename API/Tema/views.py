@@ -46,7 +46,7 @@ def BeliTema(request, id_tema):
     tema = Tema.objects.get(id = id_tema)
     if request.method == "POST":
         if poin >= int(tema.poin):
-            TemaUser.objects.filter(id = id_tema).update(
+            TemaUser.objects.filter(id_tema = id_tema, id_user = user.id).update(
                 purchased = True,
                 status = "Purchased"
             )
